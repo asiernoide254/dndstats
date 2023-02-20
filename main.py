@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 import random
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
 @app.get('/', response_class=HTMLResponse)
 def index(request: Request):
@@ -16,6 +17,3 @@ def index(request: Request):
         resultado = sum(dados)  # Suma los valores restantes de los dados
         resultados.append(resultado)
     return templates.TemplateResponse("index.html", {"request": request, "resultados": resultados})
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
