@@ -1,19 +1,24 @@
-from fastapi import FastAPI, staticfiles, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-
 import random
+from pathlib import Path
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
 
-@app.get('/', response_class=HTMLResponse)
+BASE_DIR = Path(__file__).resolve().parent
+templates = Jinja2Templates(directory=str(BASE_DIR / "../templates"))
+
+@app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     resultados = []
-    for i in range(6):
-        dados = [random.randint(1, 6) for i in range(4)]  # Lanza 4 dados de 6 caras
-        dados.remove(min(dados)) # Borra el menor resultado
-        resultado = sum(dados)  # Suma los valores restantes de los dados
-        resultados.append(resultado)
-    return templates.TemplateResponse("index.html", {"request": request, "resultados": resultados})
+    for _ in range(6):
+        dados = [random.randint(1, 6) for _ in range(4)]
+        dados.remove(min(dados))
+        resultados.append(sum(dados))
+
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={"resultados": resultados},
+    )
